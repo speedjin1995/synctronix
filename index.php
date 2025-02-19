@@ -34,6 +34,7 @@ $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+$product3 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -60,6 +61,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include jQuery Validate plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <?php include 'layouts/head-css.php'; ?>
     <style>
@@ -69,6 +71,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
         .modal-header {
             padding: var(1rem, 1rem) !important;
+        }
+
+        #productTable th, #productTable td{
+            border: 1px solid #cdcdcd;
         }
     </style>
 </head>
@@ -172,6 +178,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <option value="Container">Container</option>
+                                                                <option value="Multiple">Multiple</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -352,12 +359,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </div>
                                                         </div>
 
-                                                        <div class="row col-12">
-                                                            <div class="col-xxl-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xxl-8 col-lg-8">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
                                                                                     <div class="col-sm-8">
@@ -365,7 +372,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
@@ -373,42 +380,21 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
-                                                                                <div class="row">
-                                                                                    <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
+                                                                                            <option>Multiple</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
                                                                                     <div class="col-sm-8">
@@ -416,20 +402,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
-                                                                                <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
@@ -441,7 +416,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divCustomerName">
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
@@ -454,7 +429,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divSupplierName" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
@@ -467,20 +442,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
                                                                                     <div class="col-sm-8">
@@ -491,7 +455,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
@@ -512,21 +476,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         </select>                                                                                        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>   
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
@@ -534,7 +487,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
@@ -547,20 +500,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
@@ -568,7 +510,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
@@ -581,20 +523,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
@@ -604,7 +535,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
@@ -628,8 +559,96 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="row col-12">
+                                                            <div class="col-xxl-4 col-lg-4">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divWeightDifference">
+                                                                                <div class="row">
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="nothing" class="col-form-label"></label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-xxl-4 col-lg-4">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
@@ -778,6 +797,38 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-xxl-12 col-lg-12" id="multipleCard" style="display:none;">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row mb-3">
+                                                                            <div class="col-10"></div>
+                                                                            <div class="col-2 ml-auto">
+                                                                                <button type="button" class="btn btn-primary add-product">Add Product</button>
+                                                                            </div>
+                                                                        </div>  
+                                                                        <div class="row">
+                                                                            <table class="table table-primary">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="7%">No</th>
+                                                                                        <th width="15%">Product</th>
+                                                                                        <th width="8%">Manual Weight</th>
+                                                                                        <th>Bin Selection (Name)</th>
+                                                                                        <th>Bin Selection (KG)</th>
+                                                                                        <th width="20%">Start Date/Time</th>
+                                                                                        <th width="20%">End Date/Time</th>
+                                                                                        <th>Action</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody id="productTable"></tbody>
+                                                                            </table>                                            
+                                                                        </div>                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="row col-12">
                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                 <div class="row">
                                                                     <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
@@ -1008,6 +1059,42 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         <!-- end main content-->
 
     </div>
+
+    <script type="text/html" id="productDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
+                    <?php while($rowProduct=mysqli_fetch_assoc($product3)){ ?>
+                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="productManualWeight" name="productManualWeight">
+                    <option value="YES">Yes</option>
+                    <option value="NO">No</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productBinWeight" name="productBinWeight" style="background-color:white;">
+            </td>
+            <td>
+                <input type="date" class="form-control" data-provider="flatpickr" id="productStartDate" name="productStartDate" style="background-color:white;">
+            </td>
+            <td>
+                <input type="date" class="form-control" data-provider="flatpickr" id="productEndDate" name="productEndDate" style="background-color:white;">
+            </td>
+            <td style="text-align:center"><button class="btn btn-danger" id="remove" style="background-color: #f06548;"><i class="fa fa-times"></i></button></td>
+        </tr>
+    </script>
+    
     <!-- END layout-wrapper -->
 
     <?php include 'layouts/customizer.php'; ?>
@@ -1039,7 +1126,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     var table = null;
-    
+    var productCount = $("#productTable").find(".details").length;
+
     $(function () {
         var ind = '<?=$indicator ?>';
         const today = new Date();
@@ -1109,9 +1197,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                        '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                        '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1583,9 +1669,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                            '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                            '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1667,6 +1751,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            productCount = 0;
+            $("#productTable").html('');
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1688,10 +1775,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             if($(this).val() == "Container")
             {
                 $('#containerCard').show();
+                $('#multipleCard').hide();
+            }
+            else if($(this).val() == "Multiple")
+            {
+                $('#multipleCard').show();
+                $('#containerCard').hide();
             }
             else
             {
                 $('#containerCard').hide();
+                $('#multipleCard').hide();
             }
         });
 
@@ -1957,6 +2051,45 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 echo 'approve('.$_GET['approve'].');';
             }
         ?>
+
+        // Find and remove selected table rows
+        $("#productTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-product").click(function(){
+            var $addContents = $("#productDetail").clone();
+            $("#productTable").append($addContents.html());
+
+            $("#productTable").find('.details:last').attr("id", "detail" + productCount);
+            $("#productTable").find('.details:last').attr("data-index", productCount);
+            $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+
+            $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
+            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount);
+            $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
+            $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
+            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount);
+            $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount);
+            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: ''
+                }
+            );
+            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: ''
+                }
+            );
+
+            productCount++;
+        });
     });
 
     function edit(id){
@@ -1968,7 +2101,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
@@ -2067,6 +2200,48 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                // Display Products
+                $('#productTable').html('');
+                productCount = 0;
+
+                if (obj.message.products.length > 0){ console.log(obj.message.products);
+                    for(var i = 0; i < obj.message.products.length; i++){
+                        var item = obj.message.products[i];
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + productCount);
+                        $("#productTable").find('.details:last').attr("data-index", productCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((item.no)+1);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount).val(item.id);
+                        $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
+                        $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount).val(item.manual_weight);
+                        $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount).val(item.bin_name);
+                        $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount).val(item.bin_weight);
+                        $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
+                                defaultDate: item.start_date || ''
+                            }
+                        );
+                        $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
+                                defaultDate: item.end_date || ''
+                            }
+                        );
+
+                        productCount++;
+                    }
+                }
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({
@@ -2180,6 +2355,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
     }
+
     </script>
 </body>
 </html>

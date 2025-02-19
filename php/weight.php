@@ -436,6 +436,37 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 //         // );
                 //     }
 
+                # Weight_Product 
+                $no = $_POST['no'];
+                $weightProductId = $_POST['weightProductId'];
+                $products =  $_POST['products'];
+                $productManualWeight = $_POST['productManualWeight'];
+                $productBinName = $_POST['productBinName'];
+                $productBinWeight = $_POST['productBinWeight'];
+                $productStartDate = $_POST['productStartDate'];
+                $productEndDate = $_POST['productEndDate'];
+
+                if(isset($no) && $no != null && count($no) > 0){
+                    for ($i=0; $i < count($no); $i++) {
+                        $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
+                        $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
+
+                        if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
+                            if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, manual_weight=?, bin_name=?, bin_weight=?, start_date=?, end_date=? WHERE id=?")){
+                                $product_stmt->bind_param('ssssssss', $weightId, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i], $weightProductId[$i]);
+                                $product_stmt->execute();
+                            }
+                        }else{
+                            if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, manual_weight, bin_name, bin_weight, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+                                $product_stmt->bind_param('sssssss', $weightId, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i]);
+                                $product_stmt->execute();
+                            }
+                        }
+                    }
+
+                    $product_stmt->close();
+                }
+
                 $update_stmt->close();
                 $db->close();
 
@@ -491,7 +522,30 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     else{
                         $update_stmt->close();
                         //$db->close();
-                        
+
+                        # Insert into Weight_Product 
+                        $no = $_POST['no'];
+                        $products =  $_POST['products'];
+                        $productManualWeight = $_POST['productManualWeight'];
+                        $productBinName = $_POST['productBinName'];
+                        $productBinWeight = $_POST['productBinWeight'];
+                        $productStartDate = $_POST['productStartDate'];
+                        $productEndDate = $_POST['productEndDate'];
+
+                        if(isset($no) && $no != null && count($no) > 0){
+                            for ($i=0; $i < count($no); $i++) { 
+                                $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
+                                $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
+
+                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, manual_weight, bin_name, bin_weight, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+                                    $product_stmt->bind_param('sssssss', $id, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i]);
+                                    $product_stmt->execute();
+                                }
+                            }
+
+                            $product_stmt->close();
+                        }
+
                         echo json_encode(
                             array(
                                 "status"=> "success", 
