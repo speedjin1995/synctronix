@@ -34,6 +34,7 @@ $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+$product3 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -60,6 +61,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include jQuery Validate plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <?php include 'layouts/head-css.php'; ?>
     <style>
@@ -69,6 +71,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
         .modal-header {
             padding: var(1rem, 1rem) !important;
+        }
+
+        #productTable th, #productTable td{
+            border: 1px solid #cdcdcd;
         }
     </style>
 </head>
@@ -117,7 +123,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                    <div class="card-header card-primary fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -172,6 +178,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <option value="Container">Container</option>
+                                                                <option value="Multiple">Multiple</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -301,7 +308,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                 </div>
                                                 <div class="modal-body">
                                                     <form role="form" id="weightForm" class="needs-validation" novalidate autocomplete="off">
-                                                        <div class="row">
+                                                        <div class="row" id="normalTopView">
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
@@ -351,13 +358,88 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="row" id="dualBinsTopView" style="display:none;">
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-primary">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-white m-0">Truck Weight</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="truckWeight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <!--div class="connected-align">
+                                                                                        <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
+                                                                                        <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
+                                                                                    </div-->
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-warning">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-black m-0">Bin : 1</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-black"><span class="counter-value" id="bin1Weight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-primary rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-warning">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-black m-0">Bin : 2</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-black"><span class="counter-value" id="bin2Weight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-primary rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                                                        <div class="row col-12">
-                                                            <div class="col-xxl-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-xxl-8 col-lg-8">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
                                                                                     <div class="col-sm-8">
@@ -365,7 +447,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
@@ -373,42 +455,22 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
-                                                                                <div class="row">
-                                                                                    <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
+                                                                                            <!-- <option>Multiple</option> -->
+                                                                                            <option>Dual Bins</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
                                                                                     <div class="col-sm-8">
@@ -416,20 +478,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
-                                                                                <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
@@ -441,7 +492,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divCustomerName">
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
@@ -454,7 +505,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divSupplierName" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
@@ -467,20 +518,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
                                                                                     <div class="col-sm-8">
@@ -491,7 +531,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
@@ -512,21 +552,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         </select>                                                                                        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>   
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
@@ -534,7 +563,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
@@ -547,20 +576,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
@@ -568,7 +586,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
@@ -581,20 +599,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
@@ -604,7 +611,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
@@ -628,8 +635,101 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="row col-12">
+                                                            <div id="purchaseDisplay" class="col-xxl-4 col-lg-4">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divWeightDifference">
+                                                                                <div class="row">
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="nothing" class="col-form-label"></label>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- To add empty space -->
+                                                                            <div class="row mb-1">
+                                                                                <p></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-xxl-4 col-lg-4">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
@@ -706,7 +806,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>                                                                                                                                  
+                                                                        
+                                                                        <!-- To add empty space -->
+                                                                        <div class="row mb-3 pb-2">
+                                                                            <p></p>
+                                                                        </div>
+                                                                    </div>                         
                                                                 </div>
                                                             </div>
                                                             <div class="col-xxl-4 col-lg-4" id="containerCard" style="display:none;">
@@ -774,15 +879,52 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <div class="input-group-text">Kg</div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>                                                                    
+                                                                        </div>     
+                                                                        <!-- To add empty space -->
+                                                                        <div class="row mb-3 pb-2">
+                                                                            <p></p>
+                                                                        </div>                                                               
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                <div class="row">
-                                                                    <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
-                                                                    <div class="col-sm-10">
-                                                                        <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                            <div class="col-xxl-12 col-lg-12" id="multipleCard" style="display:none;">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row mb-3">
+                                                                            <div class="col-10"></div>
+                                                                            <div class="col-2 d-flex justify-content-end">
+                                                                                <button type="button" class="btn btn-primary add-product">Add Product</button>
+                                                                            </div>
+                                                                        </div>  
+                                                                        <div class="row">
+                                                                            <table class="table table-primary">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="5%">No</th>
+                                                                                        <th width="15%">Product</th>
+                                                                                        <th>Order Weight (KG)</th>
+                                                                                        <th>Bin Selection (Name)</th>
+                                                                                        <th>Actual Weight (KG)</th>
+                                                                                        <th>Start Date/Time</th>
+                                                                                        <th>End Date/Time</th>
+                                                                                        <th>Variance (KG)</th>
+                                                                                        <th>Action</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody id="productTable"></tbody>
+                                                                            </table>                                            
+                                                                        </div>                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row col-12">
+                                                                <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                    <div class="row">
+                                                                        <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
+                                                                        <div class="col-sm-10">
+                                                                            <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1008,6 +1150,51 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         <!-- end main content-->
 
     </div>
+
+    <script type="text/html" id="productDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
+                    <?php while($rowProduct=mysqli_fetch_assoc($product3)){ ?>
+                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productOrderWeight" name="productOrderWeight" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productActualWeight" name="productActualWeight" style="background-color:white;" value="0">
+                <input type="hidden" id="productActualWeightHidden" name="productActualWeightHidden">
+            </td>
+            <td>
+                <input type="date" class="form-control" data-provider="flatpickr" id="productStartDate" name="productStartDate" style="background-color:white;">
+            </td>
+            <td>
+                <input type="date" class="form-control" data-provider="flatpickr" id="productEndDate" name="productEndDate" style="background-color:white;">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productVariance" name="productVariance" style="background-color:white;" value="0">
+                <input type="hidden" id="productVarianceHidden" name="productVarianceHidden">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-primary me-2" id="productWeightCapture" type="button">
+                    <i class="mdi mdi-sync"></i>
+                </button>
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+    
     <!-- END layout-wrapper -->
 
     <?php include 'layouts/customizer.php'; ?>
@@ -1039,7 +1226,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     var table = null;
-    
+    var rowCount = $("#productTable").find(".details").length;
+
     $(function () {
         var ind = '<?=$indicator ?>';
         const today = new Date();
@@ -1106,15 +1294,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    className: 'action-button-col',
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                        '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                        '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                         if (row.is_approved == 'Y') {
-                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ', \'' + row.weight_type + '\')">' + '<i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
                         }
 
                         if (row.is_approved == 'N') {
@@ -1133,6 +1320,31 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
             }   
+        });
+
+        // Add event listener for opening and closing details on row click
+        $('#weightTable tbody').on('click', 'tr', function (e) {
+            var tr = $(this); // The row that was clicked
+            var row = table.row(tr);
+
+            // Exclude specific td elements by checking the event target
+            if ($(e.target).closest('td').hasClass('action-button-col')) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
         });
 
         $('#submitWeight').on('click', function(){
@@ -1580,15 +1792,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     { data: 'nett_weight1' },
                     { 
                         data: 'id',
+                        className: 'action-button-col',
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                            '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                            '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                             if (row.is_approved == 'Y') {
-                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ', \'' + row.weight_type + '\')">' + '<i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
                             }
 
                             if (row.is_approved == 'N') {
@@ -1651,7 +1862,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
+            $('#addModal').find("#manualWeightNo").prop("checked", true).trigger('click');
             $('#addModal').find("#manualWeightYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
@@ -1667,6 +1878,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            rowCount = 1;
+            $('#productTable').html('');
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1688,10 +1902,26 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             if($(this).val() == "Container")
             {
                 $('#containerCard').show();
+                $('#multipleCard').hide();
+                $('#purchaseDisplay').show();
+                $('#dualBinsTopView').hide();
+                $('#normalTopView').show();
+            }
+            else if($(this).val() == "Multiple" || $(this).val() == "Dual Bins")
+            {
+                $('#multipleCard').show();
+                $('#containerCard').hide();
+                $('#purchaseDisplay').hide();
+                $('#dualBinsTopView').show();
+                $('#normalTopView').hide();
             }
             else
             {
                 $('#containerCard').hide();
+                $('#multipleCard').hide();
+                $('#purchaseDisplay').show();
+                $('#dualBinsTopView').hide();
+                $('#normalTopView').show();
             }
         });
 
@@ -1757,12 +1987,20 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#grossIncoming').removeAttr('readonly');
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
+
+                // Change actual weight to editable
+                $('.details input[id^="productActualWeight"]').prop('readonly', false);
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
                 $('#tareOutgoing').attr('readonly', 'readonly');
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
+
+                // Change actual weight to readonly
+                $('.details input[id^="productActualWeight"]').prop('readonly', true);
+
+
             }
         });
 
@@ -1801,8 +2039,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
             var current = Math.abs(nett1 - nett2);
             $('#currentWeight').text(current.toFixed(0));
+            $('#truckWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
+            $('#truckWeight').trigger('change');
             $('#finalWeight').trigger('change');
         });
 
@@ -1957,7 +2197,234 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 echo 'approve('.$_GET['approve'].');';
             }
         ?>
+
+        // Find and remove selected table rows
+        $("#productTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+
+            $("#productTable tr").each(function (index) {
+                $(this).find('input[name^="no"]').val(index + 1);
+            });
+        });
+
+        // Find and refresh actual weight
+        $("#productTable").on('click', 'button[id^="productWeightCapture"]', function () {
+            var text = $('#indicatorWeight').text();
+            $(this).closest('.details').find('input[id^="productActualWeight"]').val(parseFloat(text).toFixed(0));
+            $(this).closest('.details').find('input[id^="productActualWeight"]').trigger('change');
+        });
+        
+        // Event delegation for order weight to calculate variance
+        $(document).on('change', 'input[id^="productOrderWeight"]', function(){
+            // Retrieve the input's attributes
+            var orderWeight = $(this).val();
+            var actualWeight = $(this).closest('.details').find('input[id^="productActualWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
+        });
+
+        // Event delegation for actual weight to calculate variance
+        $(document).on('change', 'input[id^="productActualWeight"]', function(){
+            var actualWeightId = $(this).attr('id'); // Get the ID of the input field
+            // Retrieve the input's attributes
+            var actualWeight = $(this).val();
+            var orderWeight = $(this).closest('.details').find('input[id^="productOrderWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
+            $(this).closest('.details').find('input[id^="productActualWeightHidden"]').val(actualWeight);
+
+            //Update Top View Bin Weight
+            if (actualWeightId == 'productActualWeight1'){
+                $("#addModal").find('#bin1Weight').text(actualWeight).trigger('change');
+            }else if (actualWeightId == 'productActualWeight2'){
+                $("#addModal").find('#bin2Weight').text(actualWeight).trigger('change');
+            }
+
+            // Update End Date if manual
+            $(this).closest('.details').find('input[id^="productEndDate"]').flatpickr({
+            
+                enableTime: true,          
+                dateFormat: "d/m/Y H:i",   
+                time_24hr: true,          
+                defaultDate: new Date(),
+                clickOpens: false
+            });
+        });     
+
+        $(".add-product").click(function(){
+            if(rowCount == 0){
+                rowCount++;
+            }
+
+            var weightType = $("#addModal").find('#weightType').val();
+
+            if (rowCount > 2 && weightType == 'Dual Bins'){
+                alert("Cannot more than 2 bins for Dual Bins weight type.");
+                return;
+            }
+
+            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+            if(manualWeight == 'false'){
+                var readonly = true;
+            }else{
+                var readonly = false;
+            }
+
+            var $addContents = $("#productDetail").clone();
+            $("#productTable").append($addContents.html());
+
+            $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+            $("#productTable").find('.details:last').attr("data-index", rowCount);
+            $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+            $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+            $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+            $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount);
+            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount);
+            $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).attr("readonly", readonly);
+            $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount);
+            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: new Date(),
+                    clickOpens: false
+                }
+            )
+            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: '',
+                    clickOpens: false
+                }
+            );
+            $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
+            $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
+
+            rowCount++;
+        });
     });
+
+    function format (row) {
+        let vehicleClass = "col-6"; // Default class
+
+        if (row.weight_type === 'Dual Bins') {
+            vehicleClass = "col-3"; // Change to col-4 if weight type is Dual Bins
+        }
+
+        var returnString = `
+            <!-- Weight Section -->
+            <div class="row">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Weighing Information</strong></span>
+                <div class="col-6">
+                    <p><strong>Transaction ID:</strong> ${row.transaction_id}</p>
+                    <p><strong>Weight Type:</strong> ${row.weight_type}</p>
+                    <p><strong>Transaction Status:</strong> ${row.transaction_status}</p>
+                    <p><strong>Transaction Date:</strong> ${row.transaction_date}</p>
+                    <p><strong>Invoice No:</strong> ${row.invoice_no}</p>
+                    <p><strong>Delivery No:</strong> ${row.delivery_no}</p>
+                </div>
+                <div class="col-6">
+                    <p><strong>Purchase Order:</strong> ${row.purchase_order}</p>
+                    <p><strong>Container No:</strong> ${row.container_no}</p>
+                    <p><strong>Customer Name:</strong> ${row.customer_name}</p>
+                    <p><strong>Product Name:</strong> ${row.product_name}</p>
+                    <p><strong>Transporter:</strong> ${row.transporter}</p>
+                    <p><strong>Destination:</strong> ${row.destination}</p>
+                </div>
+            </div>
+            <hr>
+            <!-- Vehicle Section -->
+            <div class="row">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Vehicle Information</strong></span>
+                <div class="${vehicleClass}" id="singleVehView">
+                    <p><strong>Vehicle Plate No:</strong> ${row.lorry_plate_no1}</p>
+                    <p><strong>Incoming:</strong> ${row.gross_weight1} Kg</p>
+                    <p><strong>Incoming Date:</strong> ${row.gross_weight1_date}</p>
+                    <p><strong>Outgoing:</strong> ${row.tare_weight1} Kg</p>
+                    <p><strong>Outgoing Date:</strong> ${row.tare_weight1_date}</p>
+                    <p><strong>Nett Weight:</strong> ${row.nett_weight1} Kg</p>
+                </div>
+        `;
+
+        if (row.weight_type == 'Container'){
+            returnString += `
+                <div class="col-6">
+                    <p><strong>Vehicle Plate No 2:</strong> ${row.lorry_plate_no2}</p>
+                    <p><strong>Gross Incoming:</strong> ${row.gross_weight2} Kg</p>
+                    <p><strong>Incoming Date:</strong> ${row.gross_weight2_date}</p>
+                    <p><strong>Tare Outgoing:</strong> ${row.tare_weight2} Kg</p>
+                    <p><strong>Outgoing Date:</strong> ${row.tare_weight2_date}</p>
+                    <p><strong>Nett Weight:</strong> ${row.nett_weight2} Kg</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Pricing Information</strong></span>
+                <div class="col-6">
+                    <p><strong>Order Weight:</strong> ${row.order_weight} Kg</p>
+                    <p><strong>Weight Difference:</strong> ${row.weight_different} Kg</p>
+                    <p><strong>Reduce Weight:</strong> ${row.reduce_weight} Kg</p>
+                    <p><strong>Sub-Total Price:</strong> RM ${row.sub_total}</p>
+                    <p><strong>SST (6%):</strong> RM ${row.sst}</p>
+                    <p><strong>Total Price:</strong> RM ${row.total_price}</p>
+                </div>
+            </div>`;
+        }else if (row.weight_type == 'Dual Bins'){
+            returnString += `
+                <div class="col-9">
+                    <table class="table table-primary table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Product</th>
+                                <th>Order Weight (KG)</th>
+                                <th>Bin Selection (Name)</th>
+                                <th>Actual Weight (KG)</th>
+                                <th>Start Date/Time</th>
+                                <th>End Date/Time</th>
+                                <th>Variance (KG)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="white-bg">`;
+
+                if (row.products.length > 0){
+                    var products = row.products;
+                    for (i = 0; i < row.products.length; i++) {
+                        returnString += `<tr>
+                            <td class="bg-white">${products[i].no}</td>
+                            <td class="bg-white">${products[i].product_id}</td>
+                            <td class="bg-white">${products[i].order_weight}</td>
+                            <td class="bg-white">${products[i].bin_name}</td>
+                            <td class="bg-white">${products[i].actual_weight}</td>
+                            <td class="bg-white">${products[i].start_date}</td>
+                            <td class="bg-white">${products[i].end_date}</td>
+                            <td class="bg-white">${products[i].variance}</td>
+                        </tr>`;
+                    }
+                }        
+
+                returnString += `</tbody>
+                    </table>
+                </div>
+            </div>`;
+        }else{
+            returnString += `</div>`;
+        }
+
+        return returnString;
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
@@ -1968,7 +2435,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
@@ -2038,7 +2505,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
-                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1).trigger('change');
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
@@ -2048,15 +2515,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
 
                 if(obj.message.manual_weight == 'true'){
-                    $("#manualWeightYes").prop("checked", true);
+                    $("#manualWeightYes").prop("checked", true).trigger('click');
                     $("#manualWeightNo").prop("checked", false);
-                    $('#manualWeightYes').trigger('click');
                 }
                 else{
                     $("#manualWeightYes").prop("checked", false);
-                    $("#manualWeightNo").prop("checked", true);
-                    $('#manualWeightNo').trigger('click');
-                }
+                    $("#manualWeightNo").prop("checked", true).trigger('click');
+               }
 
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
@@ -2067,6 +2532,52 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                // Display Products
+                $('#productTable').html('');
+                rowCount = 1;
+
+                if (obj.message.products.length > 0){
+                    for(var i = 0; i < obj.message.products.length; i++){
+                        var item = obj.message.products[i];
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount).val(item.id);
+                        $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_id);
+                        $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount).val(item.order_weight);
+                        $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount).val(item.bin_name);
+                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).val(item.actual_weight).trigger('change');
+                        $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount).val(item.actual_weight);
+                        $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
+                                defaultDate: item.start_date || ''
+                            }
+                        );
+                        $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
+                                defaultDate: item.end_date || ''
+                            }
+                        );
+                        $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).val(item.variance);
+                        $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount).val(item.variance);
+
+                        rowCount++;
+                    }
+                }
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({
@@ -2159,8 +2670,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
     }
 
-    function print(id) {
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+    function print(id, type) {
+        $.post('php/print.php', {userID: id, file: 'weight', type: type}, function(data){
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){
@@ -2180,6 +2691,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
     }
+
     </script>
 </body>
 </html>
